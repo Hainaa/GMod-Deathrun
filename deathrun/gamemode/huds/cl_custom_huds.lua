@@ -2,11 +2,11 @@ local clamp = math.Clamp
 
 function HUDList()
 	local huds = {
-		"acylus",
-		"acylusminimal",
+		"center",
+		"minimal",
 		"default",
 		"nohud",
-		"circlecenter"
+		"circularcenter"
 	}
 
 	return huds
@@ -14,7 +14,7 @@ end
 
 include ( "cl_hud_funcs.lua" )
 
-function acylus_hud(ply, roundtime)
+function center_hud(ply, roundtime)
 	-- Health bar
 	local hw, hh, border = 204, 30, 2
 	local hy = ScrH() - 50
@@ -56,7 +56,7 @@ function acylus_hud(ply, roundtime)
 	draw.WordBox( 4, rtx, 50, rt, "Deathrun_SmoothBig", Color( 44, 44, 44, 200 ), Color( 255, 255, 255, 255 ) )
 end
 
-function acylusminimal_hud(ply, roundtime)
+function minimal_hud(ply, roundtime)
 	-- Health bar
 	local hw, hh, border = 102, 15, 2
 	local hy = ScrH()/3 + 50
@@ -122,7 +122,7 @@ function default_hud(ply, roundtime)
 	draw.WordBox( 4, tw - ttw/2, sy - 45, rt, "Deathrun_SmoothBig", Color( 44, 44, 44, 200 ), Color( 255, 255, 255, 255 ) )
 end
 
-function circlecenter_hud(ply, roundtime)
+function circularcenter_hud(ply, roundtime)
 	local x, y = ScrW()/2, ScrH()/4 * 3.5
 	DrawCircle(60, x, y, Color (0, 0, 0, 100))
 
