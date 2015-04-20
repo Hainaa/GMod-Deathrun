@@ -7,6 +7,9 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "cl_frames.lua" )
 AddCSLuaFile( "menutext.lua" )
 
+AddCSLuaFile( "huds/cl_hud_funcs.lua" )
+AddCSLuaFile( "huds/cl_custom_huds.lua" )
+
 AddCSLuaFile( "rtv/config.lua" )
 AddCSLuaFile( "rtv/cl_rtv.lua" )
 

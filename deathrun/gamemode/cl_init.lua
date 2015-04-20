@@ -12,12 +12,19 @@ include( "cl_frames.lua" )
 include( "menutext.lua" )
 include( "cl_voice.lua" )
 
+include( "huds/cl_hud_funcs.lua")
+include( "huds/cl_custom_huds.lua" )
+
 include( "rtv/config.lua" )
 include( "rtv/cl_rtv.lua" )
 
 if SERVER then return end
 
-local name = "Dragon Dildo"
+local name = "Petch's slap"
+
+-- HUD settings
+local prefsTable = {}
+local hudType = "default"
 
 language.Add( "trigger_hurt", name )
 language.Add( "env_explosion", name )
@@ -37,9 +44,27 @@ function draw.AAText( text, font, x, y, color, align )
 
 end
 
-local clamp = math.Clamp
+function LoadXtriaPrefs()
 
-local hx, hw, hh, border = 5, 204, 30, 2
+	if file.Exists("xtria_deathrun.txt", "DATA") then 
+		prefsTable = util.JSONToTable(file.Read("xtria_deathrun.txt"))
+		hudType = prefsTable["hudType"]
+	else
+		prefsTable["hudType"] = hudType
+
+		file.Write("xtria_deathrun.txt", util.TableToJSON(prefsTable)) 
+	end
+end
+
+function SaveXtriaPrefs()
+	prefsTable["hudType"] = hudType
+
+	file.Write("xtria_deathrun.txt", util.TableToJSON(prefsTable)) 
+end
+
+LoadXtriaPrefs()
+
+local clamp = math.Clamp
 
 local keys = {}
 local draw_keys = false
@@ -59,26 +84,37 @@ function GM:HUDPaint( )
 		keys[ply] = {}
 	end
 
-	local hy = ScrH() - 35
+	---- DRAW HUDS ------------------------
 
-	draw.RoundedBox( 0, hx, hy, hw, hh, Color( 44, 44, 44, 175 ) )
-	draw.RoundedBox( 0, hx + border, hy + border, hw - border*2, hh - border*2, Color( 180, 80, 80, 255 ) )
-	local thp = ply:Alive() and ply:Health() or 0
-	local hp = thp
-	if hp > 0 then
-		hp = ( hw - border*2 ) * ( math.Clamp(ply:Health(),0,100)/100)
-		draw.RoundedBox( 0, hx + border, hy + border, hp, hh - border*2, Color( 80, 180, 60, 255 ) )
+	--[[
+	-- Draw acylus HUD
+	if hudType == "acylus" then
+		acylus_hud(ply, self:GetRoundTime())
 	end
 
-	draw.AAText( tostring( thp > 999 and "dafuq" or math.max(thp, 0) ), "Deathrun_SmoothBig", hx + 5, hy - 3, Color(255,255,255,255), TEXT_ALIGN_LEFT )
+	-- Draw acylusminimal HUD
+	if hudType == "acylusminimal" then
+		acylusminimal_hud(ply, self:GetRoundTime())
+	end
 
-	surface.SetFont( "Deathrun_SmoothBig" )
-	local rt = string.ToMinutesSeconds(self:GetRoundTime())
-	local ttw, _ = surface.GetTextSize( rt )
+	-- xtria hud
+	if hudType == "xtria" then
+		draw.Arc( ScrW()/2, ScrH()/4*3, 40, 5, 20, 0, 0, Color( 255, 255, 255, 255 ))
+		--draw.Arc(cx,cy,radius,thickness,startang,endang,roughness,color)
+	end
 
-	local tw = hw/2 + 5
-	draw.WordBox( 4, tw - ttw/2, hy - 45, rt, "Deathrun_SmoothBig", Color( 44, 44, 44, 200 ), Color( 255, 255, 255, 255 ) )
+	-- Draw Default hud
+	if hudType == "default" then
+		default_hud(ply, self:GetRoundTime())
+	end
+	]]
 
+	local hudFunction = hudType .. "_hud"
+	_G[hudType .. "_hud"](ply, self:GetRoundTime())
+
+	---- END DRAW HUDS ---------------------------
+
+	-- Key press
 	if draw_keys then
 		local w, h = 25, 25
 		local scrh = ScrH()/2 + h
@@ -158,8 +194,8 @@ local HUDHide = {
 	["CHudHealth"] = true,
 	["CHudSuitPower"] = true,
 	["CHudBattery"] = true,
-	--["CHudAmmo"] = true,
-	--["CHudSecondaryAmmo"] = true,
+	["CHudAmmo"] = true,
+	["CHudSecondaryAmmo"] = true,
 
 }
 
@@ -392,9 +428,43 @@ local function PlayerList()
 
 end
 
+local function HUDSelect()
+
+	local fr = vgui.Create("dFrame")
+	fr:SetSize( 200, 60 )
+	fr:Center()
+	fr:SetTitle("HUD Select")
+	fr:MakePopup()
+	fr:SetDeleteOnClose(false)
+
+	-- HUD Drop down menu
+	local hudDropdown = vgui.Create("DComboBox", fr)
+	hudDropdown:SetSize(fr:GetWide() - 10, 20)
+	hudDropdown:SetPos(5, 30)
+	hudDropdown:SetValue(hudType)
+
+	for _, v in pairs(HUDList()) do hudDropdown:AddChoice(v) end
+	--[[
+	hudDropdown:AddChoice("default")
+	hudDropdown:AddChoice("acylus")
+	hudDropdown:AddChoice("acylusminimal")
+	hudDropdown:AddChoice("nohud")
+	hudDropdown:AddChoice("xtria")
+	]]
+
+	hudDropdown.OnSelect = function( _, _, value)
+		hudType = value
+		SaveXtriaPrefs()
+	end
+
+	-- HUD drop down menu end
+end
+
 local menu
 local btn
 local function ShowHelp()
+
+	LoadXtriaPrefs()
 
 	if menu then
 		menu:SetVisible(true)
@@ -458,6 +528,17 @@ local function ShowHelp()
 
 		end
 
+	end
+
+	-- HUD select button
+	local hudSelect = vgui.Create("DButton")
+	hudSelect:SetParent(menu)
+	hudSelect:SetText("Change HUD")
+	hudSelect:SetSize(250,30)
+	hudSelect:SetPos(menu:GetWide()/2 - hudSelect:GetSize()/2, menu:GetTall() - 70)
+	hudSelect.DoClick = function()
+		menu:SetVisible(false)
+		HUDSelect()
 	end
 
 end
