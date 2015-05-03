@@ -76,7 +76,7 @@ local RTVoted = false
 local ShowRounds = CreateConVar( "dr_notify_rounds_left", "1", FCVAR_ARCHIVE )
 
 GM.RoundFunctions = {
-	
+
 	[ROUND_WAITING] = function( gm )
 
 		gm:NotifyAll( "Not enough players!" )
@@ -203,7 +203,7 @@ GM.ThinkRoundFunctions = {
 			gm:SetRound( ROUND_ENDING, TEAM_DEATH )
 		elseif numb == 0 then
 			gm:SetRound( ROUND_ENDING, TEAM_RUNNER )
-		end		
+		end
 
 	end,
 

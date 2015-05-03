@@ -1,6 +1,7 @@
-if CLIENT then 
+if CLIENT then
 
-	include( "shared.lua" ) 
+	include( "shared.lua" )
+	--include( "customdeathtext.lua" )
 
 	surface.CreateFont( "Deathrun_Smooth", { font = "Trebuchet18", size = 14, weight = 700, antialias = true } )
 	surface.CreateFont( "Deathrun_SmoothMed", { font = "Trebuchet18", size = 24, weight = 700, antialias = true } )
@@ -18,13 +19,15 @@ include( "huds/cl_custom_huds.lua" )
 include( "rtv/config.lua" )
 include( "rtv/cl_rtv.lua" )
 
+include ( "finishline.lua" )
+
 if SERVER then return end
 
 local name = "Petch's slap"
 
 -- HUD settings
 local prefsTable = {}
-local hudType = "default"
+local hudType = "circularcenter"
 
 language.Add( "trigger_hurt", name )
 language.Add( "env_explosion", name )
@@ -46,20 +49,20 @@ end
 
 function LoadXtriaPrefs()
 
-	if file.Exists("xtria_deathrun.txt", "DATA") then 
-		prefsTable = util.JSONToTable(file.Read("xtria_deathrun.txt"))
+	if file.Exists("deathrun_hud_prefs.txt", "DATA") then
+		prefsTable = util.JSONToTable(file.Read("deathrun_hud_prefs.txt"))
 		hudType = prefsTable["hudType"]
 	else
 		prefsTable["hudType"] = hudType
 
-		file.Write("xtria_deathrun.txt", util.TableToJSON(prefsTable)) 
+		file.Write("deathrun_hud_prefs.txt", util.TableToJSON(prefsTable))
 	end
 end
 
 function SaveXtriaPrefs()
 	prefsTable["hudType"] = hudType
 
-	file.Write("xtria_deathrun.txt", util.TableToJSON(prefsTable)) 
+	file.Write("deathrun_hud_prefs.txt", util.TableToJSON(prefsTable))
 end
 
 LoadXtriaPrefs()
@@ -86,30 +89,6 @@ function GM:HUDPaint( )
 
 	---- DRAW HUDS ------------------------
 
-	--[[
-	-- Draw acylus HUD
-	if hudType == "acylus" then
-		acylus_hud(ply, self:GetRoundTime())
-	end
-
-	-- Draw acylusminimal HUD
-	if hudType == "acylusminimal" then
-		acylusminimal_hud(ply, self:GetRoundTime())
-	end
-
-	-- xtria hud
-	if hudType == "xtria" then
-		draw.Arc( ScrW()/2, ScrH()/4*3, 40, 5, 20, 0, 0, Color( 255, 255, 255, 255 ))
-		--draw.Arc(cx,cy,radius,thickness,startang,endang,roughness,color)
-	end
-
-	-- Draw Default hud
-	if hudType == "default" then
-		default_hud(ply, self:GetRoundTime())
-	end
-	]]
-
-	local hudFunction = hudType .. "_hud"
 	_G[hudType .. "_hud"](ply, self:GetRoundTime())
 
 	---- END DRAW HUDS ---------------------------
@@ -190,7 +169,7 @@ net.Receive( "_KeyRelease", function()
 end )
 
 local HUDHide = {
-	
+
 	["CHudHealth"] = true,
 	["CHudSuitPower"] = true,
 	["CHudBattery"] = true,
@@ -297,7 +276,7 @@ local function CreateNumButton( convar, fr, title, tooltip, posx, posy, Cvar, wa
 				icon:SetImage( GetIcon( change and "0" or "1" ) )
 				btn:SetDisabled( change )
 				disabled = change
-			end  
+			end
 
 
 		end
@@ -312,7 +291,7 @@ local function CreateNumButton( convar, fr, title, tooltip, posx, posy, Cvar, wa
 		local cv = GetConVarString(convar)
 		cv = cv == "1" and "0" or "1"
 		RunConsoleCommand(convar, cv )
-		icon:SetImage( GetIcon(cv) )		
+		icon:SetImage( GetIcon(cv) )
 	end
 
 	if tooltip then
@@ -331,7 +310,7 @@ function WrapText(text, width, font) -- Credit goes to BKU for this function!
 	if w < width then
 		return {text} -- Nope, but wrap in table for uniformity
 	end
-   
+
 	local words = string.Explode(" ", text) -- No spaces means you're screwed
 
 	local lines = {""}
@@ -365,6 +344,7 @@ local function GetPlayerIcon( muted )
 
 end
 
+--[[
 local function PlayerList()
 
 	local fr = vgui.Create( "dFrame" )
@@ -427,6 +407,7 @@ local function PlayerList()
 
 
 end
+]]
 
 local function HUDSelect()
 
@@ -490,19 +471,19 @@ local function ShowHelp()
 	plist:SetPos( btn:GetWide() + 10, menu:GetTall() - 30 )
 	plist.DoClick = function(self)
 		menu:SetVisible(false)
-		PlayerList()
+		HUDSelect()
 	end
 	plist.Paint = function( self, w, h )
 		surface.SetDrawColor( Color( 45, 55, 65, 200 ) )
 		surface.DrawRect( 0, 0, w, h )
-		draw.AAText( "Player List", "Deathrun_Smooth", 5, h/2 - tH/2, Color(255,255,255,255) )
+		draw.AAText( "Change HUD", "Deathrun_Smooth", 5, h/2 - tH/2, Color(255,255,255,255) )
 	end
-	plist:SetToolTip( "Select players to mute/unmute." )
+	plist:SetToolTip( "How you want the HUD to look like" )
 
 	local icon = vgui.Create( "DImage", plist )
 	icon:SetSize( 16, 16 )
 	icon:SetPos( plist:GetWide() - 20, plist:GetTall()/2 - icon:GetTall()/2 )
-	icon:SetImage( "icon16/sound.png" )
+	icon:SetImage( "icon16/application.png" )
 
 	local dlist = vgui.Create( "DPanelList", menu )
 	dlist:SetSize( menu:GetWide() - 10, menu:GetTall() - 70 )
@@ -530,7 +511,7 @@ local function ShowHelp()
 
 	end
 
-	-- HUD select button
+	--[[ HUD select button
 	local hudSelect = vgui.Create("DButton")
 	hudSelect:SetParent(menu)
 	hudSelect:SetText("Change HUD")
@@ -539,7 +520,7 @@ local function ShowHelp()
 	hudSelect.DoClick = function()
 		menu:SetVisible(false)
 		HUDSelect()
-	end
+	end ]]
 
 end
 
@@ -551,7 +532,7 @@ local function Notify( str )
 end
 
 local Deathrun_Funcs = {
-	
+
 	["F1"] = ShowHelp,
 	["Notify"] = Notify
 
@@ -576,7 +557,7 @@ function GM:HUDWeaponPickedUp( wep )
 
 	if (!LocalPlayer():Alive()) then return end
 	if not wep.GetPrintName then return end
-		
+
 	local pickup = {}
 	pickup.time 		= CurTime()
 	pickup.name 		=  wep:GetPrintName()
@@ -585,7 +566,7 @@ function GM:HUDWeaponPickedUp( wep )
 	pickup.fadein		= 0.04
 	pickup.fadeout		= 0.3
 	pickup.color		= team.GetColor( LocalPlayer():Team() )
-	
+
 	surface.SetFont( pickup.font )
 	local w, h = surface.GetTextSize( pickup.name )
 	pickup.height		= h
@@ -594,14 +575,14 @@ function GM:HUDWeaponPickedUp( wep )
 	if (self.PickupHistoryLast >= pickup.time) then
 		pickup.time = self.PickupHistoryLast + 0.05
 	end
-	
+
 	table.insert( self.PickupHistory, pickup )
-	self.PickupHistoryLast = pickup.time 
+	self.PickupHistoryLast = pickup.time
 
 end
 
 function GM:OnSpawnMenuOpen()
-	RunConsoleCommand( "_dr_req_drop" )	
+	RunConsoleCommand( "_dr_req_drop" )
 end
 
 local connecting = {}

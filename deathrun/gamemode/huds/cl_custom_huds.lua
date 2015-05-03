@@ -4,7 +4,7 @@ function HUDList()
 	local huds = {
 		"center",
 		"minimal",
-		"default",
+		"original",
 		"nohud",
 		"circularcenter"
 	}
@@ -52,7 +52,7 @@ function center_hud(ply, roundtime)
 
 	local tw = hw/2 + 5
 	local rtx = (ScrW()/2) - ttw/2;
-	
+
 	draw.WordBox( 4, rtx, 50, rt, "Deathrun_SmoothBig", Color( 44, 44, 44, 200 ), Color( 255, 255, 255, 255 ) )
 end
 
@@ -82,11 +82,11 @@ function minimal_hud(ply, roundtime)
 
 	local tw = hw/2 + 5
 	local rtx = ScrW()/2 - ttw/2 - 4;
-	
+
 	draw.WordBox( 4, rtx, ScrH()/3, rt, "Deathrun_Smooth", Color( 44, 44, 44, 50 ), Color( 255, 255, 255, 100 ) )
 end
 
-function default_hud(ply, roundtime)
+function original_hud(ply, roundtime)
 	local hy = ScrH() - 35
 	local hx, hw, hh, border = 5, 204, 30, 2
 
@@ -155,7 +155,7 @@ function circularcenter_hud(ply, roundtime)
 
 	local rtx = x - ttw/2 - 4;
 	local rty = y - 30;
-	
+
 	draw.WordBox( 4, rtx, rty, rt, "Deathrun_Smooth", Color( 44, 44, 44, 50 ), Color( 255, 255, 255, 255 ) )
 end
 

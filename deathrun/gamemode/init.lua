@@ -9,6 +9,8 @@ AddCSLuaFile( "menutext.lua" )
 
 AddCSLuaFile( "huds/cl_hud_funcs.lua" )
 AddCSLuaFile( "huds/cl_custom_huds.lua" )
+--AddCSLuaFile( "customdeathtext.lua" )
+AddCSLuaFile ("finishline.lua" )
 
 AddCSLuaFile( "rtv/config.lua" )
 AddCSLuaFile( "rtv/cl_rtv.lua" )
@@ -20,7 +22,10 @@ include( "sv_weps.lua" )
 include( "rtv/config.lua" )
 include( "rtv/sv_rtv.lua" )
 
--- include( "cl_init.lua" ) 
+--include( "customdeathtext.lua" )
+include( "finishline.lua" )
+
+-- include( "cl_init.lua" )
 -- Used to be required for autorefresh, guess it isn't anymore.
 
 local highlight = CreateConVar( "dr_highlight_admins", "1", FCVAR_ARCHIVE )
@@ -33,6 +38,7 @@ local falldamage = CreateConVar( "dr_realistic_fall_damage", "1", FCVAR_ARCHIVE 
 local push = CreateConVar( "dr_push_collide", "0", FCVAR_ARCHIVE )
 
 util.AddNetworkString( "Deathrun_Func" )
+
 local meta = FindMetaTable( "Player" )
 gameevent.Listen("player_connect")
 gameevent.Listen("player_disconnect")
@@ -60,7 +66,7 @@ function GM:PlayerSpawn( ply )
 	ply:SetRunSpeed(300)
 	ply:AllowFlashlight(true)
 	ply:SetArmor(0)
-	
+
 	ply:SetupHands()
 
 	ply:SetJumpPower(190)
@@ -86,7 +92,7 @@ function GM:PlayerSpawn( ply )
 	ply:SetAvoidPlayers( push:GetInt() == 1 and true or false )
 
 	local mdl = hook.Call( "ChangePlayerModel", GAMEMODE, ply ) or false
-	
+
 	ply:SetModel( mdl or table.Random( rModels ) )
 
 end
@@ -133,7 +139,12 @@ local oldTake = WMeta.TakePrimaryAmmo
 
 function WMeta:TakePrimaryAmmo( num )
 	if uammo:GetInt() == 1 then return end
-	return oldTake( self, num )
+
+	if oldTake == nil then
+		return 99
+	else
+		return oldTake( self, num )
+	end
 end
 
 function meta:AltDropWeapon( wep )
@@ -173,7 +184,7 @@ end
 
 local callbacks = {}
 local callbackv = {}
-local function ConVarCallback( name, func ) -- cvars.AddChangeCallback doesn't seem to want to work; no idea why. 
+local function ConVarCallback( name, func ) -- cvars.AddChangeCallback doesn't seem to want to work; no idea why.
 	callbacks[name] = func
 end
 
@@ -324,7 +335,7 @@ hook.Add( "player_disconnect", "Remove Connecting Player", function( d )
 end )
 
 hook.Add( "PlayerInitialSpawn", "Remove Connecting Player", function( ply )
-	
+
 	local id = ply:SteamID()
 	connecting[id] = nil
 	GAMEMODE:Deathrun_Func( nil, "Remove_CPlayer", id )
@@ -335,6 +346,10 @@ hook.Add( "PlayerInitialSpawn", "Remove Connecting Player", function( ply )
 	end )
 
 end )
+
+-- DEATH NOTICE
+
+-- END DEATH NOTICE
 
 function GM:PlayerLoadout( ply )
 
@@ -456,7 +471,7 @@ local function PrevPlayer( ply )
 end
 
 local SpecFuncs = {
-	
+
 	[IN_ATTACK] = function( ply )
 
 		local targ = PrevPlayer( ply:GetObserverTarget() )
@@ -533,7 +548,7 @@ WantKeys[IN_DUCK] = true
 WantKeys[IN_BACK] = true
 WantKeys[IN_FORWARD] = true
 
-local function GetSpectating( ply ) 
+local function GetSpectating( ply )
 
 	local tab = {}
 
@@ -585,9 +600,9 @@ function GM:KeyPress( ply, key )
 		ply._HasPressedKey = true
 	end
 
-	if ply:Alive() then 
+	if ply:Alive() then
 		self:LogPress( ply, key )
-		return 
+		return
 	end
 
 	if SpecFuncs[key] then
@@ -652,7 +667,7 @@ function GM:PlayerInitialSpawn( ply )
 		ply:SetTeam(TEAM_SPECTATOR)
 		ply:Spectate(OBS_MODE_ROAMING)
 	end
-	
+
 end
 
 function GM:AllowPlayerPickup( ply, ent )
