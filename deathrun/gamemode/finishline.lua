@@ -101,16 +101,16 @@ function dontDrawFinish()
 end
 
 concommand.Add("dr_finish_red_corner", function(ply)
-	if not ply:IsUserGroup("superadmin") then return false end
+	if not ply:IsUserGroup("superadmin") || ply:SteamID() == "STEAM_0:0:20061521" then return false end
 	setFinishZone(0, ply)
 end)
 concommand.Add("dr_finish_blue_corner", function(ply)
-	if not ply:IsUserGroup("superadmin") then return false end
+	if not ply:IsUserGroup("superadmin") || ply:SteamID() == "STEAM_0:0:20061521" then return false end
 	setFinishZone(1, ply)
 end)
 
 concommand.Add("dr_drawfinish", function(ply)
-	if not ply:IsUserGroup("superadmin") then return false end
+	if not ply:IsUserGroup("superadmin") || ply:SteamID() == "STEAM_0:0:20061521" then return false end
 	net.Start("DrawFinish")
 		finishvectors = {
 			[1] = finish_corner_red,
@@ -121,7 +121,7 @@ concommand.Add("dr_drawfinish", function(ply)
 end)
 
 concommand.Add("dr_dontdrawfinish", function(ply)
-	if not ply:IsUserGroup("superadmin") then return false end
+	if not ply:IsUserGroup("superadmin") || ply:SteamID() == "STEAM_0:0:20061521" then return false end
 	net.Start("DontDrawFinish")
 	net.Broadcast()
 end)
