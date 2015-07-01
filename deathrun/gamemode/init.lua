@@ -10,10 +10,12 @@ AddCSLuaFile( "menutext.lua" )
 AddCSLuaFile( "huds/cl_hud_funcs.lua" )
 AddCSLuaFile( "huds/cl_custom_huds.lua" )
 --AddCSLuaFile( "customdeathtext.lua" )
-AddCSLuaFile ("finishline.lua" )
+AddCSLuaFile ("finishline/cl_fline.lua" )
 
 AddCSLuaFile( "rtv/config.lua" )
 AddCSLuaFile( "rtv/cl_rtv.lua" )
+
+AddCSLuaFile( "ghostmode/cl_ghost.lua" )
 
 include( "shared.lua" )
 include( "sv_round.lua" )
@@ -23,7 +25,10 @@ include( "rtv/config.lua" )
 include( "rtv/sv_rtv.lua" )
 
 --include( "customdeathtext.lua" )
-include( "finishline.lua" )
+include( "finishline/sv_fline.lua" )
+
+include( "ghostmode/config.lua" )
+include( "ghostmode/sv_ghost.lua" )
 
 -- include( "cl_init.lua" )
 -- Used to be required for autorefresh, guess it isn't anymore.
@@ -270,7 +275,7 @@ function GM:PlayerCanPickupWeapon( ply, wep )
 
 
 	if ply:HasWeapon( wep:GetClass() ) then return false end
-	if ply:Team() == TEAM_DEATH then
+	if ply:Team() ~= TEAM_RUNNER then
 		if wep:GetClass() != "weapon_crowbar" and pickup:GetInt() == 0 then
 			return false
 		end

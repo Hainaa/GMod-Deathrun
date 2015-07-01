@@ -15,6 +15,10 @@ function GM:CreateTeams()
 	team.SetSpawnPoint( TEAM_RUNNER, "info_player_counterterrorist" )
 
 	team.SetUp( TEAM_SPECTATOR, "Spectator", Color( 125, 125, 125, 255 ), true )
+
+	TEAM_GHOST = 4
+	team.SetUp ( TEAM_GHOST, "Ghost", Color( 100, 100, 100, 255 ), false )
+	team.SetSpawnPoint( TEAM_GHOST, "info_player_counterterrorist" )
 end
 
 local meta = FindMetaTable( "Player" )

@@ -14,22 +14,34 @@ end
 
 include ( "cl_hud_funcs.lua" )
 
+function healthString(hp, team)
+	if team == TEAM_GHOST then
+		return "GHOST"
+	else
+		return tostring( hp > 999 and "dafuq" or math.max(hp, 0) )
+	end
+
+	return tostring( hp > 999 and "dafuq" or math.max(hp, 0) )
+end
+
 function center_hud(ply, roundtime)
 	-- Health bar
 	local hw, hh, border = 204, 30, 2
 	local hy = ScrH() - 50
 	local hx = (ScrW()/2) - hw/2
-
-	draw.RoundedBox( 0, hx, hy, hw, hh, Color( 44, 44, 44, 175 ) )
-	draw.RoundedBox( 0, hx + border, hy + border, hw - border*2, hh - border*2, Color( 180, 80, 80, 255 ) )
 	local thp = ply:Alive() and ply:Health() or 0
 	local hp = thp
-	if hp > 0 then
-		hp = ( hw - border*2 ) * ( math.Clamp(ply:Health(),0,100)/100)
-		draw.RoundedBox( 0, hx + border, hy + border, hp, hh - border*2, Color( 80, 180, 60, 255 ) )
+
+	if ply:Team() ~= TEAM_GHOST then 
+		draw.RoundedBox( 0, hx, hy, hw, hh, Color( 44, 44, 44, 175 ) )
+		draw.RoundedBox( 0, hx + border, hy + border, hw - border*2, hh - border*2, Color( 180, 80, 80, 255 ) )
+		if hp > 0 then
+			hp = ( hw - border*2 ) * ( math.Clamp(ply:Health(),0,100)/100)
+			draw.RoundedBox( 0, hx + border, hy + border, hp, hh - border*2, Color( 80, 180, 60, 255 ) )
+		end
 	end
 
-	draw.AAText( tostring( thp > 999 and "dafuq" or math.max(thp, 0) ), "Deathrun_SmoothBig", ScrW()/2, hy - 3, Color(255,255,255,255), TEXT_ALIGN_CENTER )
+	draw.AAText( healthString(thp, ply:Team()), "Deathrun_SmoothBig", ScrW()/2, hy - 3, Color(255,255,255,255), TEXT_ALIGN_CENTER )
 
 	-- Speed meter
 	local sy = ScrH() - 50 - hh
@@ -61,17 +73,19 @@ function minimal_hud(ply, roundtime)
 	local hw, hh, border = 102, 15, 2
 	local hy = ScrH()/3 + 50
 	local hx = (ScrW()/2) - hw/2
+	local thp = ply:Alive() and ply:Health() or 0
+	local hp = thp
 
 	local speed = math.Round(LocalPlayer():GetVelocity():Length());
 	draw.AAText( speed, "Deathrun_Smooth", ScrW()/2, ScrH()/3 + 100, Color(255,255,255,100), TEXT_ALIGN_CENTER )
 
-	draw.RoundedBox( 0, hx, hy, hw, hh, Color( 44, 44, 44, 175 ) )
-	draw.RoundedBox( 0, hx + border, hy + border, hw - border*2, hh - border*2, Color( 180, 80, 80, 100 ) )
-	local thp = ply:Alive() and ply:Health() or 0
-	local hp = thp
-	if hp > 0 then
-		hp = ( hw - border*2 ) * ( math.Clamp(ply:Health(),0,100)/100)
-		draw.RoundedBox( 0, hx + border, hy + border, hp, hh - border*2, Color( 80, 180, 60, 100 ) )
+	if ply:Team() ~= TEAM_GHOST then 
+		draw.RoundedBox( 0, hx, hy, hw, hh, Color( 44, 44, 44, 175 ) )
+		draw.RoundedBox( 0, hx + border, hy + border, hw - border*2, hh - border*2, Color( 180, 80, 80, 100 ) )
+		if hp > 0 then
+			hp = ( hw - border*2 ) * ( math.Clamp(ply:Health(),0,100)/100)
+			draw.RoundedBox( 0, hx + border, hy + border, hp, hh - border*2, Color( 80, 180, 60, 100 ) )
+		end
 	end
 
 
@@ -89,17 +103,19 @@ end
 function original_hud(ply, roundtime)
 	local hy = ScrH() - 35
 	local hx, hw, hh, border = 5, 204, 30, 2
-
-	draw.RoundedBox( 0, hx, hy, hw, hh, Color( 44, 44, 44, 175 ) )
-	draw.RoundedBox( 0, hx + border, hy + border, hw - border*2, hh - border*2, Color( 180, 80, 80, 255 ) )
 	local thp = ply:Alive() and ply:Health() or 0
 	local hp = thp
-	if hp > 0 then
-		hp = ( hw - border*2 ) * ( math.Clamp(ply:Health(),0,100)/100)
-		draw.RoundedBox( 0, hx + border, hy + border, hp, hh - border*2, Color( 80, 180, 60, 255 ) )
+
+	if ply:Team() ~= TEAM_GHOST then 
+		draw.RoundedBox( 0, hx, hy, hw, hh, Color( 44, 44, 44, 175 ) )
+		draw.RoundedBox( 0, hx + border, hy + border, hw - border*2, hh - border*2, Color( 180, 80, 80, 255 ) )
+		if hp > 0 then
+			hp = ( hw - border*2 ) * ( math.Clamp(ply:Health(),0,100)/100)
+			draw.RoundedBox( 0, hx + border, hy + border, hp, hh - border*2, Color( 80, 180, 60, 255 ) )
+		end
 	end
 
-	draw.AAText( tostring( thp > 999 and "dafuq" or math.max(thp, 0) ), "Deathrun_SmoothBig", hx + 5, hy - 3, Color(255,255,255,255), TEXT_ALIGN_LEFT )
+	draw.AAText( healthString(thp, ply:Team()), "Deathrun_SmoothBig", hx + 5, hy - 3, Color(255,255,255,255), TEXT_ALIGN_LEFT )
 
 	-- Speed meter
 	local sy = hy - hh
@@ -124,6 +140,9 @@ end
 
 function circularcenter_hud(ply, roundtime)
 	local x, y = ScrW()/2, ScrH()/4 * 3.5
+	local thp = ply:Alive() and ply:Health() or 0
+	local hp = thp
+
 	DrawCircle(60, x, y, Color (0, 0, 0, 100))
 
 	-- Speed meter
@@ -139,14 +158,14 @@ function circularcenter_hud(ply, roundtime)
 
 	-- Health meter
 	--DrawCircle(50, x, y, Color(180, 80, 80, 255))
-	local thp = ply:Alive() and ply:Health() or 0
-	local hp = thp
-	if hp > 0 then
-		hp = -180 * ( math.Clamp(ply:Health(),0,100)/100)
-		draw.Arc( x, y, 50, 50, 90 + hp, 90 + math.abs(hp), 0, Color( 80, 180, 60, 155 ))
+	if ply:Team() ~= TEAM_GHOST then 
+		if hp > 0 then
+			hp = -180 * ( math.Clamp(ply:Health(),0,100)/100)
+			draw.Arc( x, y, 50, 50, 90 + hp, 90 + math.abs(hp), 0, Color( 80, 180, 60, 155 ))
+		end
 	end
 
-	draw.AAText( tostring( thp > 999 and "dafuq" or math.max(thp, 0) ), "Deathrun_SmoothBig", x, y, Color(255,255,255,255), TEXT_ALIGN_CENTER )
+	draw.AAText( healthString(thp, ply:Team()) , "Deathrun_SmoothBig", x, y, Color(255,255,255,255), TEXT_ALIGN_CENTER )
 
 	-- Round timer
 	surface.SetFont( "Deathrun_Smooth" )

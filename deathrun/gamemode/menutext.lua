@@ -12,5 +12,9 @@ Crouch: Unspectate player.
 
 Chat Commands:
 rtv: Vote to start a map vote.
+
 timeleft: View the amount of rounds before the map changes.
+
+ghost: Puts you into Ghost mode so you can run the map without interrupting
+a round in progress. Can only be done if you are dead.
 ]]

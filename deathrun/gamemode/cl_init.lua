@@ -19,11 +19,12 @@ include( "huds/cl_custom_huds.lua" )
 include( "rtv/config.lua" )
 include( "rtv/cl_rtv.lua" )
 
-include ( "finishline.lua" )
+
+include( "ghostmode/cl_ghost.lua" )
 
 if SERVER then return end
 
-local name = "Petch's slap"
+local name = "The Unknown"
 
 -- HUD settings
 local prefsTable = {}
@@ -89,7 +90,7 @@ function GM:HUDPaint( )
 
 	---- DRAW HUDS ------------------------
 
-	_G[hudType .. "_hud"](ply, self:GetRoundTime())
+		_G[hudType .. "_hud"](ply, self:GetRoundTime())
 
 	---- END DRAW HUDS ---------------------------
 
