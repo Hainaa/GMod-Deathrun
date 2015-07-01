@@ -19,6 +19,7 @@ include( "huds/cl_custom_huds.lua" )
 include( "rtv/config.lua" )
 include( "rtv/cl_rtv.lua" )
 
+include( "finishline/cl_fline.lua" )
 
 include( "ghostmode/cl_ghost.lua" )
 

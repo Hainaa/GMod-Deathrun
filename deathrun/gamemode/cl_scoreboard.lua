@@ -355,6 +355,10 @@ local function Refresh()
 		pool[#pool+1] = v
 	end
 
+	for k, v in pairs( team.GetPlayers(TEAM_GHOST) ) do
+		pool[#pool+1] = v
+	end
+
 	if #pool > 0 then
 
 		CreateEmpty( 10 )
@@ -364,6 +368,7 @@ local function Refresh()
 			if not IsValid(v) then continue end
 			CreatePlayer(v)
 		end
+
 	end
 
 	local connecting = GAMEMODE:GetConnectingPlayers()

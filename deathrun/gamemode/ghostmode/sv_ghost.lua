@@ -139,15 +139,14 @@ hook.Add("ShouldCollide", "GhostCollision", function( ent1, ent2 )
 	return true
 end)
 
---[[
+
 hook.Add("EntityTakeDamage", "GhostGod", function( target, dmginfo)
 	if target:IsPlayer() then
-		if target:Team() == TEAM_GHOST then
+		if target:Team() == TEAM_GHOST and target:GetMoveType() == MOVETYPE_NOCLIP then
 			dmginfo:SetDamage( 0 )
 		end
 	end
 end)
-]]
 
 hook.Add("PlayerUse", "DisallowGhostInteract", function( ply, ent) 
 	if ply:Team() == TEAM_GHOST then
