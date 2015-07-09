@@ -32,7 +32,7 @@ include( "finishline/sv_fline.lua" )
 --include( "ghostmode/config.lua" )
 --include( "ghostmode/sv_ghost.lua" )
 
-include( "points/sv_points.lua" )
+--include( "points/sv_points.lua" )
 
 include( "buttonc/sh_buttonclaiming.lua" )
 

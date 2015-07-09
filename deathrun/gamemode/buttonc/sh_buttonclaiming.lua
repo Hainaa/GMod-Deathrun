@@ -1,7 +1,8 @@
-local buttons = {}
 local claim_radius = 75 -- if you can knife it, you can claim it.
 
 if SERVER then
+	local buttons = {}
+
 	util.AddNetworkString("UpdateButtonClaims")
 
 	local function UpdateButtonClaims()
@@ -18,7 +19,7 @@ if SERVER then
 		local players = {}
 		local buttonswerechanged = false
 
-		for k,v in ipairs( player.GetAllPlaying() ) do
+		for k,v in ipairs( player.GetAll() ) do
 			if v:Alive() and v:Team() == TEAM_DEATH then -- get Living Death players
 				table.insert( players, v )
 			end
@@ -32,6 +33,8 @@ if SERVER then
 					claimedPlayer = "null",
 					pos = v:GetPos() + v:OBBCenter()
 				}
+
+				UpdateButtonClaims()
 			else
 				local pos = buttons[ v:MapCreationID() ].pos
 				local closestDist = 10000000
@@ -52,7 +55,7 @@ if SERVER then
 					buttonswerechanged = true
 				elseif closestDist < claim_radius and buttons[ v:MapCreationID() ].claimedPlayer ~= closestPlayer:SteamID() then -- someone within claiming distance, and the button is unclaimed
 					buttons[ v:MapCreationID() ].claimed = true
-					buttons[ v:MapCreationID() ].claimedPlayer = closestPlayer:SteamID()
+					buttons[ v:MapCreationID() ].claiwmedPlayer = closestPlayer:SteamID()
 					buttonswerechanged = true
 				elseif closestDist > claim_radius and buttons[ v:MapCreationID() ].claimed == true then
 					buttons[ v:MapCreationID() ].claimed = false -- nobody within claiming distance
@@ -67,6 +70,9 @@ if SERVER then
 			UpdateButtonClaims()
 		end
 	end
+
+	CheckButtonClaims()
+
 	timer.Create("CheckButtonClaims", 0.35, 0, function()
 		
 		CheckButtonClaims()
@@ -89,12 +95,11 @@ if SERVER then
 
 end
 
-if CLIENT then 
+if CLIENT then
+	local buttons = {}
 
 	net.Receive("UpdateButtonClaims", function()
-
 		buttons = net.ReadTable()
-
 	end)
 
 
@@ -107,7 +112,7 @@ if CLIENT then
 				local alpha = 255
 
 				if dist > claim_radius then
-					alpha = Lerp( InverseLerp( dist, claim_radius, claim_radius*3 ), 255, 0 )
+					alpha = Lerp( Lerp( dist, claim_radius*3, claim_radius ), 255, 0 )
 				end
 
 				local x,y = v.pos:ToScreen().x, v.pos:ToScreen().y
@@ -119,7 +124,7 @@ if CLIENT then
 						claimtext = "Claimed by "..ply:Nick()
 					end
 				end
-				draw.SimpleText( claimtext , "deathrun_derma_Tiny", x, y, Color(v.claimed and 255 or 100, (not v.claimed) and 255 or 100,100, alpha), TEXT_ALIGN_CENTER )
+				draw.SimpleText( claimtext , "BudgetLabel", x, y, Color(v.claimed and 255 or 100, (not v.claimed) and 255 or 100,100, alpha), TEXT_ALIGN_CENTER )
 			end
 		end
 	end)
