@@ -28,6 +28,24 @@ function setFinishZone(corner, ply)
 	end
 end
 
+function moveCorner(corner, x, y, z)
+	local vadd = Vector( x, y, z )
+
+	if corner == "red" then
+		corner_red:Add( vadd )
+	elseif corner == "blue" then
+		corner_blue:Add( vadd )
+	end
+
+	net.Start("UpdateFinishCorners")
+		local finishvectors = {
+			[1] = corner_red,
+			[2] = corner_blue
+		}
+		net.WriteTable(finishvectors)
+	net.SendToServer()
+end
+
 function drawFinish(finishvectors)
 	print("Visualising finish zone, do dr_dontdrawfinish to clear")
 	corner_red = finishvectors[1]
@@ -81,10 +99,13 @@ concommand.Add("dr_drawfinish", function(ply)
 	end
 end)
 
-concommand.Add("dr_dontdrawfinish", function(ply)
+concommand.Add("dr_finish_corner_move", function( ply, _, args )
 	if ply:IsUserGroup("superadmin") || ply:SteamID() == "STEAM_0:0:20061521" then
-		net.Start("DontDrawFinish")
-		net.Broadcast()
+		for k,v in pairs (args) do
+			if k == 1 then continue end
+			args[k] = tonumber(v)
+		end
+		moveCorner(args[1], args[2], args[3], args[4])
 	end
 end)
 

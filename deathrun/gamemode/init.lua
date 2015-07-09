@@ -15,7 +15,9 @@ AddCSLuaFile ("finishline/cl_fline.lua" )
 AddCSLuaFile( "rtv/config.lua" )
 AddCSLuaFile( "rtv/cl_rtv.lua" )
 
-AddCSLuaFile( "ghostmode/cl_ghost.lua" )
+--AddCSLuaFile( "ghostmode/cl_ghost.lua" )
+
+AddCSLuaFile( "buttonc/sh_buttonclaiming.lua" )
 
 include( "shared.lua" )
 include( "sv_round.lua" )
@@ -27,8 +29,12 @@ include( "rtv/sv_rtv.lua" )
 --include( "customdeathtext.lua" )
 include( "finishline/sv_fline.lua" )
 
-include( "ghostmode/config.lua" )
-include( "ghostmode/sv_ghost.lua" )
+--include( "ghostmode/config.lua" )
+--include( "ghostmode/sv_ghost.lua" )
+
+include( "points/sv_points.lua" )
+
+include( "buttonc/sh_buttonclaiming.lua" )
 
 -- include( "cl_init.lua" )
 -- Used to be required for autorefresh, guess it isn't anymore.

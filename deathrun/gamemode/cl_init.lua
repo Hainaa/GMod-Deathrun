@@ -21,7 +21,9 @@ include( "rtv/cl_rtv.lua" )
 
 include( "finishline/cl_fline.lua" )
 
-include( "ghostmode/cl_ghost.lua" )
+include( "buttonc/sh_buttonclaiming.lua" )
+
+--include( "ghostmode/cl_ghost.lua" )
 
 if SERVER then return end
 

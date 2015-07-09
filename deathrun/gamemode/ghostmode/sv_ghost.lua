@@ -82,6 +82,16 @@ hook.Add("PlayerSay", "BeTheGhost", function( ply, text )
 	end
 end)
 
+hook.Add("PostPlayerDeath", "ShowEntitiesAgain", function( ply )
+	if ply:Team() == TEAM_GHOST then
+		for _,v in pairs(ENTIG) do
+			if IsValid(v) then
+				v:SetPreventTransmit(ply, false)
+			end
+		end
+	end
+end)
+
 hook.Add("PlayerSpawn", "GhostSpawn", function( ply )
 
 	if ply:Team() == TEAM_GHOST then

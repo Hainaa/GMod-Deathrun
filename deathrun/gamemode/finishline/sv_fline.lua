@@ -70,9 +70,10 @@ function PlayerCheckFinish(_, player)
 		if player:Team() ~= TEAM_RUNNER then return false end
 
 		if table.HasValue( finish, player ) then return false end
-		if position > 3 then return false end
 
 		position = position + 1
+
+		hook.Run( "OnPlayerCrossFinish", player, position)
 
 		if position == 1 then
 			PrintMessage( HUD_PRINTTALK, "[FINISHLINE] " .. player:Name() .. " is the 1st to reach the end!")
@@ -82,10 +83,12 @@ function PlayerCheckFinish(_, player)
 			PrintMessage( HUD_PRINTTALK, "[FINISHLINE] " .. player:Name() .. " is the 2nd to reach the end!")
 			finish[position] = player
 			PlaySoundFinish()
-		else
+		elseif position == 3 then
 			PrintMessage( HUD_PRINTTALK, "[FINISHLINE] " .. player:Name() .. " is the 3rd to reach the end!")
 			finish[position] = player
 			PlaySoundFinish()
+		else
+			finish[position] = player
 		end
 	end
 end
@@ -94,6 +97,7 @@ function PlayerCrossFinish()
 	local hasPlayers = false
 
 	if GetGlobalInt( "Deathrun_RoundPhase" ) == 2 then -- ROUND_ACTIVE
+
 		local PlayersInArea = ents.FindInBox(finish_corner_red, finish_corner_blue)
 
 		for _,v in pairs(PlayersInArea) do
