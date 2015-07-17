@@ -12,6 +12,7 @@ include( "cl_scoreboard.lua" )
 include( "cl_frames.lua" )
 include( "menutext.lua" )
 include( "cl_voice.lua" )
+include( "cl_screenfx.lua" )
 
 include( "huds/cl_hud_funcs.lua")
 include( "huds/cl_custom_huds.lua" )
@@ -22,6 +23,9 @@ include( "rtv/cl_rtv.lua" )
 include( "finishline/cl_fline.lua" )
 
 include( "buttonc/sh_buttonclaiming.lua" )
+
+include( "points/cl_points.lua" )
+include( "points/cl_deathrundetails.lua" )
 
 --include( "ghostmode/cl_ghost.lua" )
 

@@ -116,6 +116,8 @@ GM.RoundFunctions = {
 
 		gm:NotifyAll( winner == 123 and "Time is up!" or team.GetName(winner).."s have won!" )
 
+		hook.Call("DR_WinningTeam", GAMEMODE, winner)
+
 		local rounds = math.max(GetGlobalInt( "dr_rounds_left", 1 ) - 1, 0)
 		SetGlobalInt( "dr_rounds_left", rounds )
 
@@ -174,6 +176,7 @@ GM.ThinkRoundFunctions = {
 
 		if gm:GetRoundTime() <= 0 then
 			gm:SetRound( ROUND_ACTIVE )
+			HasDoneCheck = false
 		end
 
 	end,
@@ -185,7 +188,7 @@ GM.ThinkRoundFunctions = {
 		if time <= 0 then
 			gm:SetRound( ROUND_ENDING, 123 )
 			return
-		elseif not HasDoneCheck and time <= GetConVarNumber( "dr_roundtime_seconds" )*0.5 then
+		elseif not HasDoneCheck and time <= GetConVarNumber( "dr_roundtime_seconds" ) - GetConVarNumber( "dr_afk_time" ) then
 			HasDoneCheck = true
 			for k, v in pairs( player.GetAll() ) do
 				if v:Alive() and not v._HasPressedKey then

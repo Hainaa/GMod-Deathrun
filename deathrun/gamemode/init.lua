@@ -1,4 +1,5 @@
 CreateConVar( "dr_roundtime_seconds", "360" )
+CreateConVar( "dr_afk_time", "20" )
 
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_scoreboard.lua" )
@@ -6,6 +7,7 @@ AddCSLuaFile( "cl_voice.lua" )
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "cl_frames.lua" )
 AddCSLuaFile( "menutext.lua" )
+AddCSLuaFile( "cl_screenfx.lua" )
 
 AddCSLuaFile( "huds/cl_hud_funcs.lua" )
 AddCSLuaFile( "huds/cl_custom_huds.lua" )
@@ -14,6 +16,10 @@ AddCSLuaFile ("finishline/cl_fline.lua" )
 
 AddCSLuaFile( "rtv/config.lua" )
 AddCSLuaFile( "rtv/cl_rtv.lua" )
+
+AddCSLuaFile( "points/config.lua" )
+AddCSLuaFile( "points/cl_points.lua" )
+AddCSLuaFile( "points/cl_deathrundetails.lua" )
 
 --AddCSLuaFile( "ghostmode/cl_ghost.lua" )
 
@@ -32,7 +38,11 @@ include( "finishline/sv_fline.lua" )
 --include( "ghostmode/config.lua" )
 --include( "ghostmode/sv_ghost.lua" )
 
---include( "points/sv_points.lua" )
+include( "points/config.lua")
+include( "points/sv_points.lua" )
+include( "sv_database.lua" )
+
+
 
 include( "buttonc/sh_buttonclaiming.lua" )
 

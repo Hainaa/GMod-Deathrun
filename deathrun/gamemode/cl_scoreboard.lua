@@ -334,6 +334,7 @@ local function Refresh()
 	local pool = {}
 
 	CreateTeamThing( game.GetMap(), Color( 255, 160, 0, 200 ) )
+	CreateTeamThing( GetGlobalInt( "dr_rounds_left", 0 ) .. " rounds left" , Color( 255, 160, 0, 200 ) )
 	CreateEmpty( 20 )
 
 	CreateTeamThing( "Deaths", Color( 160, 50, 50, 200 ) )

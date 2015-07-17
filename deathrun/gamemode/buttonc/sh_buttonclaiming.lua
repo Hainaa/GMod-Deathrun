@@ -83,7 +83,7 @@ if SERVER then
 		local mid = ent:MapCreationID()
 		local sid = ply:SteamID()
 
-		if ply:Team() == TEAM_RUNNER then return true end -- to stop secrets Breaking
+		if ply:Team() == TEAM_RUNNER and ply:Alive() then return true end -- to stop secrets Breaking
 
 		if buttons[ mid ].claimedPlayer == sid or buttons[ mid ].claimed == false then -- if they own it, or if it is unclaimed (e.g. they Run and press it the moment before it updates on the server, it won't disable and it wont cause them to lose the runner.)
 			return true

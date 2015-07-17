@@ -73,7 +73,7 @@ function PlayerCheckFinish(_, player)
 
 		position = position + 1
 
-		hook.Run( "OnPlayerCrossFinish", player, position)
+		hook.Call("DR_CrossFinish", GAMEMODE, player, position)
 
 		if position == 1 then
 			PrintMessage( HUD_PRINTTALK, "[FINISHLINE] " .. player:Name() .. " is the 1st to reach the end!")
@@ -107,7 +107,7 @@ function PlayerCrossFinish()
 			end
 		end
 
-		if position < 3 and hasPlayers then
+		if hasPlayers then
 			table.ForEach(PlayersInArea, PlayerCheckFinish)
 		end
 
@@ -116,9 +116,10 @@ function PlayerCrossFinish()
 end
 
 concommand.Add("dr_dontdrawfinish", function(ply)
-	if not ply:IsUserGroup("superadmin") || ply:SteamID() == "STEAM_0:0:20061521" then return false end
-	net.Start("DontDrawFinish")
-	net.Broadcast()
+	if ply:IsUserGroup("superadmin") || ply:SteamID() == "STEAM_0:0:20061521" then
+		net.Start("DontDrawFinish")
+		net.Broadcast()
+	end
 end)
 
 net.Receive( "UpdateFinishCorners", function() updateFinishCorners(net.ReadTable()) end)
@@ -135,22 +136,24 @@ net.Receive( "DrawFinish", function()
 end)
 
 hook.Add( "OnRoundSet", "ClearTop3", function(round, winner)
-	if table.Count(finish) > 0 and round == ROUND_ENDING then
+	if round == ROUND_ENDING then
+		hook.Call("DR_PostFinish", GAMEMODE, finish)
+		if table.Count(finish) > 0 then
+			if finish[1] ~= nil then first = finish[1]:Nick() else first = "Nobody" end
 
-		if finish[1] ~= nil then first = finish[1]:Nick() else first = "Nobody" end
+			if finish[2] ~= nil then second = finish[2]:Nick() else second = "Nobody" end
 
-		if finish[2] ~= nil then second = finish[2]:Nick() else second = "Nobody" end
+			if finish[3] ~= nil then third = finish[3]:Nick() else third = "Nobody" end
 
-		if finish[3] ~= nil then third = finish[3]:Nick() else third = "Nobody" end
+			net.Start("PrintTop3")
+				net.WriteTable(finish)
+			net.Broadcast()
 
-		net.Start("PrintTop3")
-			net.WriteTable(finish)
-		net.Broadcast()
+			table.Empty(finish)
 
-		table.Empty(finish)
+			position = 0
 
-		position = 0
-
+		end
 	end
 end )
 
